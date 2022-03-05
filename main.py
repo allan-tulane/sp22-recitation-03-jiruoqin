@@ -2,6 +2,7 @@
 CMPS 2200  Recitation 3.
 See recitation-03.pdf for details.
 """
+from posixpath import split
 import time
 
 class BinaryNumber:
@@ -17,6 +18,26 @@ class BinaryNumber:
 ## Implement multiplication functions here. Note that you will have to
 ## ensure that x, y are appropriately sized binary vectors for a
 ## divide and conquer approach.
+
+def _quadratic_multiply(x, y):
+    xvec = x.binary_vec
+    yvec = y.binary_vec
+    
+    if len(xvec) <=1 and len(yvec) <=1:
+        return x.decimal_val * y.decimal_val
+    
+    xvec, yvec = pad(xvec,yvec)
+
+    x_left, x_right = split_number(xvec)
+    y_left, y_right = split_number(yvec)
+    
+    n = len(xvec)-1
+    first_product = _quadratic_multiply(x_left, y_left)
+    second_product = _quadratic_multiply(x_left, y_right) + _quadratic_multiply(x_right, y_left)
+    thrid_product = _quadratic_multiply(x_right, y_right)
+    return bit_shift(BinaryNumber(2), n).decimal_val * first_product + bit_shift(BinaryNumber(2), n//2).decimal_val*second_product + thrid_product
+
+
 
 def binary2int(binary_vec): 
     if len(binary_vec) == 0:
@@ -46,7 +67,8 @@ def pad(x,y):
 
 def quadratic_multiply(x, y):
     ### TODO
-    pass
+    
+    return _quadratic_multiply(x,y)
     ###
 
 
@@ -54,6 +76,9 @@ def quadratic_multiply(x, y):
 ## Feel free to add your own tests here.
 def test_multiply():
     assert quadratic_multiply(BinaryNumber(2), BinaryNumber(2)) == 2*2
+    assert quadratic_multiply(BinaryNumber(4), BinaryNumber(5)) == 4*5
+    assert quadratic_multiply(BinaryNumber(1000), BinaryNumber(25)) == 1000*25
+    assert quadratic_multiply(BinaryNumber(13), BinaryNumber(17)) == 13*17
     
     
 def time_multiply(x, y, f):
