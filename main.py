@@ -22,20 +22,22 @@ class BinaryNumber:
 def _quadratic_multiply(x, y):
     xvec = x.binary_vec
     yvec = y.binary_vec
+
     
-    if len(xvec) <=1 and len(yvec) <=1:
-        return x.decimal_val * y.decimal_val
+    if x.decimal_val <= 1 and y.decimal_val <= 1:
+        return BinaryNumber(x.decimal_val * y.decimal_val)
     
     xvec, yvec = pad(xvec,yvec)
 
+    n = len(xvec)
+
+
     x_left, x_right = split_number(xvec)
     y_left, y_right = split_number(yvec)
-    
-    n = len(xvec)-1
-    first_product = _quadratic_multiply(x_left, y_left)
-    second_product = _quadratic_multiply(x_left, y_right) + _quadratic_multiply(x_right, y_left)
-    thrid_product = _quadratic_multiply(x_right, y_right)
-    return bit_shift(BinaryNumber(2), n).decimal_val * first_product + bit_shift(BinaryNumber(2), n//2).decimal_val*second_product + thrid_product
+        
+    return BinaryNumber(bit_shift(_quadratic_multiply(x_left,y_left) ,n).decimal_val
+    + bit_shift( BinaryNumber(_quadratic_multiply(x_left,y_right).decimal_val +  _quadratic_multiply(x_right, y_left).decimal_val) , n//2).decimal_val
+    + _quadratic_multiply(x_right,y_right).decimal_val)
 
 
 
@@ -68,7 +70,7 @@ def pad(x,y):
 def quadratic_multiply(x, y):
     ### TODO
     
-    return _quadratic_multiply(x,y)
+    return _quadratic_multiply(x,y).decimal_val
     ###
 
 
